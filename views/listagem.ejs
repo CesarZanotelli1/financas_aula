@@ -23,8 +23,8 @@
       <span class="badge text-bg-primary">Total: <%= totalLancamentos %></span>
     </div>
 
-    <% if (erro) { %>
-      <div class="alert alert-danger" role="alert"><%= erro %></div>
+    <% if (locals.erro) { %>
+      <div class="alert alert-danger" role="alert"><%= locals.erro %></div>
     <% } %>
 
     <div class="table-responsive bg-white shadow-sm rounded">

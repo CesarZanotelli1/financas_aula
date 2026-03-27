@@ -51,13 +51,14 @@ function autenticarSessao(req, res, next) {
 const listarLancamentos = async (req, res) => {
   try {
     // Executar SELECT * FROM lancamento
-    const result = await pool.query('SELECT * FROM lancamento ORDER BY data_lancamento DESC');
+    const result = await pool.query('SELECT * FROM lancamento');
 
     // Enviar dados para a view de listagem
     res.render('listagem', {
       lancamentos: result.rows,
       totalLancamentos: result.rows.length,
       usuario: req.session.usuario,
+      erro: null,
     });
   } catch (error) {
     console.error('Erro ao buscar lançamentos:', error);
