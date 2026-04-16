@@ -1,8 +1,10 @@
 const nodemailer = require("nodemailer");
 
-let transporterPromise;
+async function enviarNotificacaoLancamento({ acao, lancamento, usuario }) {
+  if (process.env.NODE_ENV === "test") {
+    return { skipped: true };
+  }
 
-function obterConfiguracaoSmtp() {
   const host = process.env.SMTP_HOST;
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
@@ -13,7 +15,13 @@ function obterConfiguracaoSmtp() {
     );
   }
 
-  return {
+  const destinatario = usuario?.email || usuario?.login;
+
+  if (!destinatario) {
+    throw new Error("Usuario logado sem e-mail para envio de notificacao.");
+  }
+
+  const transporter = nodemailer.createTransport({
     host,
     port: Number(process.env.SMTP_PORT || 587),
     secure: process.env.SMTP_SECURE === "true",
@@ -21,34 +29,8 @@ function obterConfiguracaoSmtp() {
       user,
       pass,
     },
-  };
-}
+  });
 
-async function criarTransporter() {
-  const transporter = nodemailer.createTransport(obterConfiguracaoSmtp());
-  await transporter.verify();
-  return transporter;
-}
-
-function getTransporter() {
-  if (!transporterPromise) {
-    transporterPromise = criarTransporter();
-  }
-  return transporterPromise;
-}
-
-async function enviarNotificacaoLancamento({ acao, lancamento, usuario }) {
-  if (process.env.NODE_ENV === "test") {
-    return { skipped: true };
-  }
-
-  const destinatario = usuario?.email || usuario?.login;
-
-  if (!destinatario) {
-    throw new Error("Usuario logado sem e-mail para envio de notificacao.");
-  }
-
-  const transporter = await getTransporter();
   const subject =
     acao === "criado" ? "Novo lancamento criado" : "Lancamento atualizado";
 
@@ -73,9 +55,7 @@ async function enviarNotificacaoLancamento({ acao, lancamento, usuario }) {
   console.log(`[Email] to=${destinatario || "nao definido"}`);
   console.log("[Email] provider=SMTP_REAL");
 
-  return {
-    ...info,
-  };
+  return info;
 }
 
 module.exports = {
