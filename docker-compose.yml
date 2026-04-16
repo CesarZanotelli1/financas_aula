@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
@@ -33,4 +33,12 @@ services:
       DB_PASSWORD: 123
       DB_NAME: financas_db
       DB_PORT: 5432
+      SESSION_SECRET: ${SESSION_SECRET:-financas-session-secret}
+      EMAIL_FROM: ${EMAIL_FROM:-Financas App <seu_email@gmail.com>}
+      EMAIL_TO: ${EMAIL_TO:-seu_email@gmail.com}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_SECURE: ${SMTP_SECURE:-true}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
     restart: always

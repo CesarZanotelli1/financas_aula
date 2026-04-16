@@ -4,8 +4,10 @@
   "description": "Aplicação de Gestão Financeira com Node.js, Express e PostgreSQL",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "npm test && npm run start:app",
+    "start:app": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "NODE_ENV=test jest --runInBand"
   },
   "keywords": [
     "finança",
@@ -18,9 +20,16 @@
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-session": "^1.19.0",
+    "nodemailer": "^6.10.1",
+    "pdfkit": "^0.17.1",
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "jest": "^30.0.5",
+    "nodemon": "^3.0.2",
+    "supertest": "^7.1.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

@@ -20,12 +20,84 @@
   <main class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h1 class="h3 mb-0">Listagem de Lancamentos</h1>
-      <span class="badge text-bg-primary">Total: <%= totalLancamentos %></span>
+      <div class="d-flex gap-2 align-items-center">
+        <span class="badge text-bg-primary">Total: <%= totalLancamentos %></span>
+        <a class="btn btn-success btn-sm" href="/lancamentos/novo">Novo</a>
+        <a
+          class="btn btn-outline-secondary btn-sm"
+          href="/lancamentos/relatorio?dataInicio=<%= filtros?.dataInicio || '' %>&dataFim=<%= filtros?.dataFim || '' %>&situacao=<%= filtros?.situacao || '' %>"
+          target="_blank"
+          rel="noopener"
+        >
+          Exportar PDF
+        </a>
+      </div>
     </div>
+
+    <% if (locals.mensagem) { %>
+      <div class="alert alert-success" role="alert"><%= mensagem %></div>
+    <% } %>
 
     <% if (locals.erro) { %>
       <div class="alert alert-danger" role="alert"><%= locals.erro %></div>
     <% } %>
+
+    <div class="card shadow-sm mb-3">
+      <div class="card-body">
+        <form method="GET" action="/lancamentos" class="row g-3 align-items-end">
+          <div class="col-12 col-md-3">
+            <label for="dataInicio" class="form-label">Data inicio</label>
+            <input type="date" class="form-control" id="dataInicio" name="dataInicio" value="<%= filtros?.dataInicio || '' %>">
+          </div>
+
+          <div class="col-12 col-md-3">
+            <label for="dataFim" class="form-label">Data fim</label>
+            <input type="date" class="form-control" id="dataFim" name="dataFim" value="<%= filtros?.dataFim || '' %>">
+          </div>
+
+          <div class="col-12 col-md-3">
+            <label for="situacao" class="form-label">Situacao</label>
+            <select class="form-select" id="situacao" name="situacao">
+              <option value="">Todas</option>
+              <option value="ativo" <%= filtros?.situacao === 'ativo' ? 'selected' : '' %>>ativo</option>
+              <option value="inativo" <%= filtros?.situacao === 'inativo' ? 'selected' : '' %>>inativo</option>
+            </select>
+          </div>
+
+          <div class="col-12 col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a href="/lancamentos" class="btn btn-outline-secondary">Limpar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+      <div class="col-12 col-md-4">
+        <div class="card border-success h-100">
+          <div class="card-body">
+            <h2 class="h6 text-success">Receitas</h2>
+            <p class="h5 mb-0">R$ <%= Number(resumo?.totalReceitas || 0).toFixed(2).replace('.', ',') %></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="card border-danger h-100">
+          <div class="card-body">
+            <h2 class="h6 text-danger">Despesas</h2>
+            <p class="h5 mb-0">R$ <%= Number(resumo?.totalDespesas || 0).toFixed(2).replace('.', ',') %></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="card border-primary h-100">
+          <div class="card-body">
+            <h2 class="h6 text-primary">Saldo</h2>
+            <p class="h5 mb-0">R$ <%= Number(resumo?.saldo || 0).toFixed(2).replace('.', ',') %></p>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="table-responsive bg-white shadow-sm rounded">
       <table class="table table-striped table-hover mb-0 align-middle">
@@ -37,12 +109,13 @@
             <th>Valor</th>
             <th>Tipo Lancamento</th>
             <th>Situacao</th>
+            <th>Acoes</th>
           </tr>
         </thead>
         <tbody>
           <% if (lancamentos.length === 0) { %>
             <tr>
-              <td colspan="6" class="text-center py-4">Nenhum lancamento encontrado.</td>
+              <td colspan="7" class="text-center py-4">Nenhum lancamento encontrado.</td>
             </tr>
           <% } %>
 
@@ -54,6 +127,14 @@
               <td>R$ <%= Number(item.valor).toFixed(2).replace('.', ',') %></td>
               <td><%= item.tipo_lancamento %></td>
               <td><%= item.situacao %></td>
+              <td>
+                <div class="d-flex gap-2">
+                  <a href="/lancamentos/<%= item.id %>/editar" class="btn btn-sm btn-outline-primary">Editar</a>
+                  <form method="POST" action="/lancamentos/<%= item.id %>/excluir" onsubmit="return confirm('Confirma exclusao deste lancamento?');">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                  </form>
+                </div>
+              </td>
             </tr>
           <% }) %>
         </tbody>

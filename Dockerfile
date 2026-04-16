@@ -16,5 +16,5 @@ COPY . .
 # Expose port 3000
 EXPOSE 3000
 
-# Start the application
-CMD ["node", "app.js"]
+# Start the application (runs tests first via npm start)
+CMD ["npm", "start"]
