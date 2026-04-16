@@ -39,5 +39,5 @@ services:
       SMTP_PORT: 465
       SMTP_SECURE: "true"
       SMTP_USER: cesar.zanotelli@universo.univates.com.br
-      SMTP_PASS: wvamzbniaahbkomz
+      SMTP_PASS: fayixfbxuynbvvxk
     restart: always

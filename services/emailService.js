@@ -1,34 +1,33 @@
 const nodemailer = require("nodemailer");
 
 let transporterPromise;
-let etherealAccount = null;
 
-async function criarTransporter() {
-  if (process.env.SMTP_HOST) {
-    return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT || 587),
-      secure: process.env.SMTP_SECURE === "true",
-      auth: process.env.SMTP_USER
-        ? {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
-          }
-        : undefined,
-    });
+function obterConfiguracaoSmtp() {
+  const host = process.env.SMTP_HOST;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+
+  if (!host || !user || !pass) {
+    throw new Error(
+      "Configuracao SMTP incompleta. Defina SMTP_HOST, SMTP_USER e SMTP_PASS.",
+    );
   }
 
-  const testAccount = await nodemailer.createTestAccount();
-  etherealAccount = testAccount;
-  return nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    secure: false,
+  return {
+    host,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: process.env.SMTP_SECURE === "true",
     auth: {
-      user: testAccount.user,
-      pass: testAccount.pass,
+      user,
+      pass,
     },
-  });
+  };
+}
+
+async function criarTransporter() {
+  const transporter = nodemailer.createTransport(obterConfiguracaoSmtp());
+  await transporter.verify();
+  return transporter;
 }
 
 function getTransporter() {
@@ -69,25 +68,13 @@ async function enviarNotificacaoLancamento({ acao, lancamento, usuario }) {
     `,
   });
 
-  const previewUrl = nodemailer.getTestMessageUrl(info);
   console.log("[Email] status=ENVIADO");
   console.log(`[Email] messageId=${info.messageId}`);
   console.log(`[Email] to=${destinatario || "nao definido"}`);
-
-  if (previewUrl) {
-    console.log("[Email] provider=ETHEREAL");
-    console.log(`[Email] previewUrl=${previewUrl}`);
-    if (etherealAccount) {
-      console.log(`[Email] etherealUser=${etherealAccount.user}`);
-      console.log(`[Email] etherealPass=${etherealAccount.pass}`);
-    }
-  } else {
-    console.log("[Email] provider=SMTP_REAL");
-  }
+  console.log("[Email] provider=SMTP_REAL");
 
   return {
     ...info,
-    previewUrl,
   };
 }
 
