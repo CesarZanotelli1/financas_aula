@@ -2,9 +2,13 @@ CREATE TABLE IF NOT EXISTS usuario (
   id SERIAL PRIMARY KEY,
   nome VARCHAR(100) NOT NULL,
   login VARCHAR(50) NOT NULL UNIQUE,
+  email VARCHAR(150),
   senha VARCHAR(100) NOT NULL,
   situacao VARCHAR(20) NOT NULL DEFAULT 'ativo'
 );
+
+ALTER TABLE usuario
+ADD COLUMN IF NOT EXISTS email VARCHAR(150);
 
 CREATE TABLE IF NOT EXISTS lancamento (
   id SERIAL PRIMARY KEY,
@@ -15,9 +19,13 @@ CREATE TABLE IF NOT EXISTS lancamento (
   situacao VARCHAR(20) NOT NULL DEFAULT 'ativo'
 );
 
-INSERT INTO usuario (nome, login, senha, situacao)
-VALUES ('Administrador', 'admin', '123', 'ativo')
+INSERT INTO usuario (nome, login, email, senha, situacao)
+VALUES ('Administrador', 'admin', 'cesar.zanotelli@universo.univates.br', '123', 'ativo')
 ON CONFLICT (login) DO NOTHING;
+
+UPDATE usuario
+SET email = 'cesar.zanotelli@universo.univates.br'
+WHERE login = 'admin';
 
 INSERT INTO lancamento (descricao, data_lancamento, valor, tipo_lancamento, situacao)
 VALUES

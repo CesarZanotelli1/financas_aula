@@ -53,7 +53,7 @@ app.post("/login", async (req, res) => {
 
   try {
     const query = `
-      SELECT id, nome, login
+      SELECT id, nome, login, email
       FROM usuario
       WHERE login = $1 AND senha = $2 AND situacao = 'ativo'
       LIMIT 1
@@ -66,7 +66,11 @@ app.post("/login", async (req, res) => {
       });
     }
 
-    req.session.usuario = result.rows[0];
+    const usuario = result.rows[0];
+    req.session.usuario = {
+      ...usuario,
+      email: usuario.email || usuario.login,
+    };
     return res.redirect("/lancamentos");
   } catch (error) {
     console.error("Erro ao validar login:", error);

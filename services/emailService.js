@@ -43,13 +43,15 @@ async function enviarNotificacaoLancamento({ acao, lancamento, usuario }) {
     return { skipped: true };
   }
 
+  const destinatario = usuario?.email || usuario?.login || process.env.EMAIL_TO;
+
   const transporter = await getTransporter();
   const subject =
     acao === "criado" ? "Novo lancamento criado" : "Lancamento atualizado";
 
   const info = await transporter.sendMail({
     from: process.env.EMAIL_FROM || "Financas App <no-reply@financas.local>",
-    to: process.env.EMAIL_TO || "financeiro@empresa.local",
+    to: destinatario,
     subject,
     html: `
       <h3>${subject}</h3>
@@ -66,9 +68,7 @@ async function enviarNotificacaoLancamento({ acao, lancamento, usuario }) {
   const previewUrl = nodemailer.getTestMessageUrl(info);
   console.log("[Email] status=ENVIADO");
   console.log(`[Email] messageId=${info.messageId}`);
-  console.log(
-    `[Email] to=${process.env.EMAIL_TO || "financeiro@empresa.local"}`,
-  );
+  console.log(`[Email] to=${destinatario || "nao definido"}`);
 
   if (previewUrl) {
     console.log("[Email] provider=ETHEREAL");
