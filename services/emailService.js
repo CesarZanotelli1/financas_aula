@@ -3,8 +3,8 @@ const nodemailer = require("nodemailer");
 const SMTP_CONFIG = {
   service: "gmail",
   auth: {
-    user: "cesar.zanotelli@universo.univates.com.br",
-    pass: "fayixfbxuynbvvxk",
+    user: "cesarzanotelli4@gmail.com",
+    pass: "vwpr kjzk mwbz qxwn",
   },
 };
 
