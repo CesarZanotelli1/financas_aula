@@ -43,7 +43,11 @@ async function enviarNotificacaoLancamento({ acao, lancamento, usuario }) {
     return { skipped: true };
   }
 
-  const destinatario = usuario?.email || usuario?.login || process.env.EMAIL_TO;
+  const destinatario = usuario?.email || usuario?.login;
+
+  if (!destinatario) {
+    throw new Error("Usuario logado sem e-mail para envio de notificacao.");
+  }
 
   const transporter = await getTransporter();
   const subject =
