@@ -1,9 +1,7 @@
 const nodemailer = require("nodemailer");
 
 const SMTP_CONFIG = {
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  service: "gmail",
   auth: {
     user: "cesar.zanotelli@universo.univates.com.br",
     pass: "fayixfbxuynbvvxk",
