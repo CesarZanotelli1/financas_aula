@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 
 let transporterPromise;
+let etherealAccount = null;
 
 async function criarTransporter() {
   if (process.env.SMTP_HOST) {
@@ -18,6 +19,7 @@ async function criarTransporter() {
   }
 
   const testAccount = await nodemailer.createTestAccount();
+  etherealAccount = testAccount;
   return nodemailer.createTransport({
     host: "smtp.ethereal.email",
     port: 587,
@@ -62,11 +64,27 @@ async function enviarNotificacaoLancamento({ acao, lancamento, usuario }) {
   });
 
   const previewUrl = nodemailer.getTestMessageUrl(info);
+  console.log("[Email] status=ENVIADO");
+  console.log(`[Email] messageId=${info.messageId}`);
+  console.log(
+    `[Email] to=${process.env.EMAIL_TO || "financeiro@empresa.local"}`,
+  );
+
   if (previewUrl) {
-    console.log("Preview Ethereal:", previewUrl);
+    console.log("[Email] provider=ETHEREAL");
+    console.log(`[Email] previewUrl=${previewUrl}`);
+    if (etherealAccount) {
+      console.log(`[Email] etherealUser=${etherealAccount.user}`);
+      console.log(`[Email] etherealPass=${etherealAccount.pass}`);
+    }
+  } else {
+    console.log("[Email] provider=SMTP_REAL");
   }
 
-  return info;
+  return {
+    ...info,
+    previewUrl,
+  };
 }
 
 module.exports = {
