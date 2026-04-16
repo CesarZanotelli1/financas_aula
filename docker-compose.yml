@@ -34,10 +34,4 @@ services:
       DB_NAME: financas_db
       DB_PORT: 5432
       SESSION_SECRET: adsdadad!
-      EMAIL_FROM: Financas App <cesar.zanotelli@universo.univates.com.br>
-      SMTP_HOST: smtp.gmail.com
-      SMTP_PORT: 465
-      SMTP_SECURE: "true"
-      SMTP_USER: cesar.zanotelli@universo.univates.com.br
-      SMTP_PASS: fayixfbxuynbvvxk
     restart: always

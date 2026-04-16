@@ -1,18 +1,21 @@
 const nodemailer = require("nodemailer");
 
+const SMTP_CONFIG = {
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "cesar.zanotelli@universo.univates.com.br",
+    pass: "fayixfbxuynbvvxk",
+  },
+};
+
+const EMAIL_FROM = "Financas App <cesar.zanotelli@universo.univates.com.br>";
+const transporter = nodemailer.createTransport(SMTP_CONFIG);
+
 async function enviarNotificacaoLancamento({ acao, lancamento, usuario }) {
   if (process.env.NODE_ENV === "test") {
     return { skipped: true };
-  }
-
-  const host = process.env.SMTP_HOST;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-
-  if (!host || !user || !pass) {
-    throw new Error(
-      "Configuracao SMTP incompleta. Defina SMTP_HOST, SMTP_USER e SMTP_PASS.",
-    );
   }
 
   const destinatario = usuario?.email || usuario?.login;
@@ -21,21 +24,11 @@ async function enviarNotificacaoLancamento({ acao, lancamento, usuario }) {
     throw new Error("Usuario logado sem e-mail para envio de notificacao.");
   }
 
-  const transporter = nodemailer.createTransport({
-    host,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: process.env.SMTP_SECURE === "true",
-    auth: {
-      user,
-      pass,
-    },
-  });
-
   const subject =
     acao === "criado" ? "Novo lancamento criado" : "Lancamento atualizado";
 
   const info = await transporter.sendMail({
-    from: process.env.EMAIL_FROM || "Financas App <no-reply@financas.local>",
+    from: EMAIL_FROM,
     to: destinatario,
     subject,
     html: `
