@@ -1,6 +1,6 @@
-const lancamentoService = require("../services/lancamentoService");
-const emailService = require("../services/emailService");
-const pdfService = require("../services/pdfService");
+const lancamentoService = require('../services/lancamentoService');
+const emailService = require('../services/emailService');
+const pdfService = require('../services/pdfService');
 
 function extrairFiltros(req) {
   return {
@@ -26,7 +26,7 @@ async function listarLancamentos(req, res) {
 
     const resumo = lancamentoService.calcularResumoLancamentos(lancamentos);
 
-    return res.render("listagem", {
+    return res.render('listagem', {
       lancamentos,
       totalLancamentos: lancamentos.length,
       usuario: req.session.usuario,
@@ -36,8 +36,8 @@ async function listarLancamentos(req, res) {
       erro: null,
     });
   } catch (error) {
-    console.error("Erro ao buscar lancamentos:", error);
-    return res.status(500).render("listagem", {
+    console.error('Erro ao buscar lancamentos:', error);
+    return res.status(500).render('listagem', {
       lancamentos: [],
       totalLancamentos: 0,
       usuario: req.session.usuario,
@@ -52,23 +52,23 @@ async function listarLancamentos(req, res) {
         saldo: 0,
       },
       mensagem: null,
-      erro: "Erro ao buscar dados do banco de dados",
+      erro: 'Erro ao buscar dados do banco de dados',
     });
   }
 }
 
 async function formNovoLancamento(req, res) {
-  return res.render("lancamento-form", {
-    titulo: "Novo Lancamento",
-    acao: "/lancamentos",
+  return res.render('lancamento-form', {
+    titulo: 'Novo Lancamento',
+    acao: '/lancamentos',
     modoEdicao: false,
     usuario: req.session.usuario,
     lancamento: {
-      descricao: "",
-      data_lancamento: "",
-      valor: "",
-      tipo_lancamento: "Receita",
-      situacao: "ativo",
+      descricao: '',
+      data_lancamento: '',
+      valor: '',
+      tipo_lancamento: 'Receita',
+      situacao: 'ativo',
     },
     erros: [],
   });
@@ -80,35 +80,35 @@ async function criarLancamento(req, res) {
 
     try {
       await emailService.enviarNotificacaoLancamento({
-        acao: "criado",
+        acao: 'criado',
         lancamento: novoLancamento,
         usuario: req.session.usuario,
       });
     } catch (error) {
-      console.error("Falha no envio de e-mail de criacao:", error.message);
+      console.error('Falha no envio de e-mail de criacao:', error.message);
     }
 
-    return res.redirect("/lancamentos?sucesso=Lancamento criado com sucesso");
+    return res.redirect('/lancamentos?sucesso=Lancamento criado com sucesso');
   } catch (error) {
     if (tratarErroValidacao(error)) {
-      return res.status(400).render("lancamento-form", {
-        titulo: "Novo Lancamento",
-        acao: "/lancamentos",
+      return res.status(400).render('lancamento-form', {
+        titulo: 'Novo Lancamento',
+        acao: '/lancamentos',
         modoEdicao: false,
         usuario: req.session.usuario,
         lancamento: req.body,
-        erros: error.validationErrors || ["Dados invalidos"],
+        erros: error.validationErrors || ['Dados invalidos'],
       });
     }
 
-    console.error("Erro ao criar lancamento:", error);
-    return res.status(500).render("lancamento-form", {
-      titulo: "Novo Lancamento",
-      acao: "/lancamentos",
+    console.error('Erro ao criar lancamento:', error);
+    return res.status(500).render('lancamento-form', {
+      titulo: 'Novo Lancamento',
+      acao: '/lancamentos',
       modoEdicao: false,
       usuario: req.session.usuario,
       lancamento: req.body,
-      erros: ["Erro interno ao criar lancamento."],
+      erros: ['Erro interno ao criar lancamento.'],
     });
   }
 }
@@ -116,16 +116,16 @@ async function criarLancamento(req, res) {
 async function formEditarLancamento(req, res) {
   const id = obterIdParam(req);
   if (!id) {
-    return res.status(400).send("ID invalido.");
+    return res.status(400).send('ID invalido.');
   }
 
   const lancamento = await lancamentoService.buscarLancamentoPorId(id);
   if (!lancamento) {
-    return res.status(404).send("Lancamento nao encontrado.");
+    return res.status(404).send('Lancamento nao encontrado.');
   }
 
-  return res.render("lancamento-form", {
-    titulo: "Editar Lancamento",
+  return res.render('lancamento-form', {
+    titulo: 'Editar Lancamento',
     acao: `/lancamentos/${id}`,
     modoEdicao: true,
     usuario: req.session.usuario,
@@ -137,7 +137,7 @@ async function formEditarLancamento(req, res) {
 async function atualizarLancamento(req, res) {
   const id = obterIdParam(req);
   if (!id) {
-    return res.status(400).send("ID invalido.");
+    return res.status(400).send('ID invalido.');
   }
 
   try {
@@ -147,42 +147,42 @@ async function atualizarLancamento(req, res) {
     );
 
     if (!lancamentoAtualizado) {
-      return res.status(404).send("Lancamento nao encontrado.");
+      return res.status(404).send('Lancamento nao encontrado.');
     }
 
     try {
       await emailService.enviarNotificacaoLancamento({
-        acao: "atualizado",
+        acao: 'atualizado',
         lancamento: lancamentoAtualizado,
         usuario: req.session.usuario,
       });
     } catch (error) {
-      console.error("Falha no envio de e-mail de atualizacao:", error.message);
+      console.error('Falha no envio de e-mail de atualizacao:', error.message);
     }
 
     return res.redirect(
-      "/lancamentos?sucesso=Lancamento atualizado com sucesso",
+      '/lancamentos?sucesso=Lancamento atualizado com sucesso',
     );
   } catch (error) {
     if (tratarErroValidacao(error)) {
-      return res.status(400).render("lancamento-form", {
-        titulo: "Editar Lancamento",
+      return res.status(400).render('lancamento-form', {
+        titulo: 'Editar Lancamento',
         acao: `/lancamentos/${id}`,
         modoEdicao: true,
         usuario: req.session.usuario,
         lancamento: { id, ...req.body },
-        erros: error.validationErrors || ["Dados invalidos"],
+        erros: error.validationErrors || ['Dados invalidos'],
       });
     }
 
-    console.error("Erro ao atualizar lancamento:", error);
-    return res.status(500).render("lancamento-form", {
-      titulo: "Editar Lancamento",
+    console.error('Erro ao atualizar lancamento:', error);
+    return res.status(500).render('lancamento-form', {
+      titulo: 'Editar Lancamento',
       acao: `/lancamentos/${id}`,
       modoEdicao: true,
       usuario: req.session.usuario,
       lancamento: { id, ...req.body },
-      erros: ["Erro interno ao atualizar lancamento."],
+      erros: ['Erro interno ao atualizar lancamento.'],
     });
   }
 }
@@ -190,15 +190,15 @@ async function atualizarLancamento(req, res) {
 async function excluirLancamento(req, res) {
   const id = obterIdParam(req);
   if (!id) {
-    return res.status(400).send("ID invalido.");
+    return res.status(400).send('ID invalido.');
   }
 
   const removido = await lancamentoService.excluirLancamento(id);
   if (!removido) {
-    return res.status(404).send("Lancamento nao encontrado.");
+    return res.status(404).send('Lancamento nao encontrado.');
   }
 
-  return res.redirect("/lancamentos?sucesso=Lancamento excluido com sucesso");
+  return res.redirect('/lancamentos?sucesso=Lancamento excluido com sucesso');
 }
 
 async function gerarRelatorioPdf(req, res) {
@@ -213,15 +213,15 @@ async function gerarRelatorioPdf(req, res) {
       filtros: filtrosAplicados,
     });
 
-    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader('Content-Type', 'application/pdf');
     res.setHeader(
-      "Content-Disposition",
-      "inline; filename=relatorio-lancamentos.pdf",
+      'Content-Disposition',
+      'inline; filename=relatorio-lancamentos.pdf',
     );
     return res.send(pdfBuffer);
   } catch (error) {
-    console.error("Erro ao gerar relatorio PDF:", error);
-    return res.status(500).send("Falha ao gerar relatorio PDF.");
+    console.error('Erro ao gerar relatorio PDF:', error);
+    return res.status(500).send('Falha ao gerar relatorio PDF.');
   }
 }
 

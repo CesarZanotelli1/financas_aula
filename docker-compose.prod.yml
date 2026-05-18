@@ -3,12 +3,11 @@ version: "3.8"
 services:
   db:
     image: postgres:15
-    container_name: postgres_db
+    container_name: postgres_db_prod
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
       POSTGRES_DB: financas_db
-    # init.sql removed to avoid duplicate initialization; migrations handle schema/data
     ports:
       - "5432:5432"
     restart: always
@@ -20,13 +19,14 @@ services:
 
   app:
     build: .
-    container_name: node_app
+    container_name: node_app_prod
     depends_on:
       db:
         condition: service_healthy
     ports:
       - "3000:3000"
     environment:
+      NODE_ENV: production
       DB_HOST: db
       DB_USER: postgres
       DB_PASSWORD: 123

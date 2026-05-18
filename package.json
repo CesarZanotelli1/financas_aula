@@ -4,10 +4,15 @@
   "description": "Aplicação de Gestão Financeira com Node.js, Express e PostgreSQL",
   "main": "app.js",
   "scripts": {
-    "start": "npm test && npm run start:app",
+    "start": "npm run migrate && npm test && npm run start:app",
     "start:app": "node app.js",
     "dev": "nodemon app.js",
-    "test": "NODE_ENV=test jest --runInBand"
+    "test": "cross-env NODE_ENV=test jest --runInBand",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "migrate": "node-pg-migrate up",
+    "migrate:down": "node-pg-migrate down",
+    "migrate:redo": "node-pg-migrate down && node-pg-migrate up"
   },
   "keywords": [
     "finança",
@@ -17,6 +22,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^17.4.2",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-session": "^1.19.0",
@@ -25,7 +31,10 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
+    "eslint": "^8.57.1",
     "jest": "^30.0.5",
+    "node-pg-migrate": "^7.9.1",
     "nodemon": "^3.0.2",
     "supertest": "^7.1.1"
   },

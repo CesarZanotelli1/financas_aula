@@ -1,4 +1,4 @@
-const { pool } = require("../config/db");
+const { pool } = require('../config/db');
 
 function normalizarFiltros(filtros = {}) {
   return {
@@ -28,7 +28,7 @@ function construirQueryListagem(filtros = {}) {
     where.push(`situacao = $${params.length}`);
   }
 
-  const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
+  const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
   const text = `
     SELECT id, descricao, data_lancamento, valor, tipo_lancamento, situacao
     FROM lancamento
@@ -52,11 +52,11 @@ function calcularResumoLancamentos(lancamentos = []) {
   return lancamentos.reduce(
     (acc, item) => {
       const valor = Number(item.valor) || 0;
-      const tipo = String(item.tipo_lancamento || "").toLowerCase();
+      const tipo = String(item.tipo_lancamento || '').toLowerCase();
 
-      if (tipo === "receita") {
+      if (tipo === 'receita') {
         acc.totalReceitas += valor;
-      } else if (tipo === "despesa") {
+      } else if (tipo === 'despesa') {
         acc.totalDespesas += valor;
       }
 
@@ -79,13 +79,13 @@ function validarLancamento(payload = {}, isUpdate = false) {
 
   if (!isUpdate || descricao !== undefined) {
     if (!descricao || String(descricao).trim().length < 3) {
-      erros.push("Descricao e obrigatoria e deve ter ao menos 3 caracteres.");
+      erros.push('Descricao e obrigatoria e deve ter ao menos 3 caracteres.');
     }
   }
 
   if (!isUpdate || dataLancamento !== undefined) {
     if (!dataLancamento || Number.isNaN(new Date(dataLancamento).getTime())) {
-      erros.push("Data de lancamento invalida.");
+      erros.push('Data de lancamento invalida.');
     }
   }
 
@@ -96,21 +96,21 @@ function validarLancamento(payload = {}, isUpdate = false) {
       Number.isNaN(Number(valor)) ||
       Number(valor) <= 0
     ) {
-      erros.push("Valor deve ser numerico e maior que zero.");
+      erros.push('Valor deve ser numerico e maior que zero.');
     }
   }
 
   if (!isUpdate || tipoLancamento !== undefined) {
-    const tiposValidos = ["Receita", "Despesa"];
+    const tiposValidos = ['Receita', 'Despesa'];
     if (!tiposValidos.includes(tipoLancamento)) {
-      erros.push("Tipo de lancamento deve ser Receita ou Despesa.");
+      erros.push('Tipo de lancamento deve ser Receita ou Despesa.');
     }
   }
 
   if (situacao !== undefined) {
-    const situacoesValidas = ["ativo", "inativo"];
+    const situacoesValidas = ['ativo', 'inativo'];
     if (!situacoesValidas.includes(situacao)) {
-      erros.push("Situacao deve ser ativo ou inativo.");
+      erros.push('Situacao deve ser ativo ou inativo.');
     }
   }
 
@@ -123,7 +123,7 @@ function validarLancamento(payload = {}, isUpdate = false) {
 async function criarLancamento(payload) {
   const validacao = validarLancamento(payload);
   if (!validacao.valido) {
-    const error = new Error("Falha de validacao");
+    const error = new Error('Falha de validacao');
     error.statusCode = 400;
     error.validationErrors = validacao.erros;
     throw error;
@@ -139,7 +139,7 @@ async function criarLancamento(payload) {
     payload.data_lancamento,
     Number(payload.valor),
     payload.tipo_lancamento,
-    payload.situacao || "ativo",
+    payload.situacao || 'ativo',
   ];
 
   const result = await pool.query(query, values);
@@ -159,7 +159,7 @@ async function buscarLancamentoPorId(id) {
 async function atualizarLancamento(id, payload) {
   const validacao = validarLancamento(payload, true);
   if (!validacao.valido) {
-    const error = new Error("Falha de validacao");
+    const error = new Error('Falha de validacao');
     error.statusCode = 400;
     error.validationErrors = validacao.erros;
     throw error;
@@ -190,7 +190,7 @@ async function atualizarLancamento(id, payload) {
   }
 
   if (campos.length === 0) {
-    const error = new Error("Nenhum campo para atualizar.");
+    const error = new Error('Nenhum campo para atualizar.');
     error.statusCode = 400;
     throw error;
   }
@@ -199,7 +199,7 @@ async function atualizarLancamento(id, payload) {
   const result = await pool.query(
     `
       UPDATE lancamento
-      SET ${campos.join(", ")}
+      SET ${campos.join(', ')}
       WHERE id = $${valores.length}
       RETURNING id, descricao, data_lancamento, valor, tipo_lancamento, situacao
     `,
@@ -211,7 +211,7 @@ async function atualizarLancamento(id, payload) {
 
 async function excluirLancamento(id) {
   const result = await pool.query(
-    "DELETE FROM lancamento WHERE id = $1 RETURNING id",
+    'DELETE FROM lancamento WHERE id = $1 RETURNING id',
     [id],
   );
   return result.rowCount > 0;
