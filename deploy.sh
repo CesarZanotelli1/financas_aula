@@ -54,24 +54,24 @@ read -p "Escolha uma opção (1-3): " opcao
 case $opcao in
     1)
         echo -e "\n${AZUL}Iniciando deploy em HOMOLOGAÇÃO...${NC}"
+        echo -e "${AZUL}Atualizando contêineres do Docker...${NC}"
+        docker-compose -f docker-compose.homolog.yml up -d --build
+        sleep 5
         # Força a migration local a apontar para a porta exposta de homologação (5433)
         export DATABASE_URL="postgres://postgres:123@127.0.0.1:5433/financas_db"
         echo -e "${AZUL}Rodando Versionamento do Banco de Dados (Migrations)...${NC}"
         npm run migrate
-        
-        echo -e "${AZUL}Atualizando contêineres do Docker...${NC}"
-        docker-compose -f docker-compose.homolog.yml up -d --build
         echo -e "${VERDE}Ambiente de Homologação atualizado com sucesso!${NC}"
         ;;
     2)
         echo -e "\n${AZUL}Iniciando deploy em PRODUÇÃO...${NC}"
+        echo -e "${AZUL}Atualizando contêineres do Docker...${NC}"
+        docker-compose -f docker-compose.prod.yml up -d --build
+        sleep 5
         # Força a migration local a apontar para a porta exposta de produção (5432)
         export DATABASE_URL="postgres://postgres:123@127.0.0.1:5432/financas_db"
         echo -e "${AZUL}Rodando Versionamento do Banco de Dados (Migrations)...${NC}"
         npm run migrate
-        
-        echo -e "${AZUL}Atualizando contêineres do Docker...${NC}"
-        docker-compose -f docker-compose.prod.yml up -d --build
         echo -e "${VERDE}Ambiente de Produção atualizado com sucesso!${NC}"
         ;;
     3)

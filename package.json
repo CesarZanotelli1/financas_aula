@@ -4,7 +4,7 @@
   "description": "Aplicação de Gestão Financeira com Node.js, Express e PostgreSQL",
   "main": "app.js",
   "scripts": {
-    "start": "npm run migrate && npm test && npm run start:app",
+    "start": "node app.js",
     "start:app": "node app.js",
     "dev": "nodemon app.js",
     "test": "cross-env NODE_ENV=test jest --runInBand",
