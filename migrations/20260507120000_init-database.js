@@ -51,7 +51,7 @@ exports.up = (pgm) => {
     tipo_lancamento: {
       type: 'varchar(20)',
       notNull: true,
-      check: "tipo_lancamento IN ('Receita', 'Despesa')",
+      check: 'tipo_lancamento IN (\'Receita\', \'Despesa\')',
     },
     situacao: {
       type: 'varchar(20)',
