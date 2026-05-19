@@ -57,8 +57,8 @@ case $opcao in
         echo -e "${AZUL}Atualizando contêineres do Docker...${NC}"
         sudo docker-compose -p homolog -f docker-compose.homolog.yml up -d --build
         sleep 5
-        echo -e "${AZUL}Rodando Versionamento do Banco de Dados (Migrations no Docker)...${NC}"
-        sudo docker run --rm -v "$(pwd)":/app -w /app -e DATABASE_URL="postgres://postgres:123@172.17.0.1:5433/financas_db" node:18-alpine npm run migrate
+        echo -e "${AZUL}Rodando Versionamento do Banco de Dados (Migrations)...${NC}"
+        sudo docker run --rm --network homolog_default -v "$(pwd)":/app -w /app -e DATABASE_URL="postgres://postgres:123@db:5432/financas_db" node:18-alpine npm run migrate
         echo -e "${VERDE}Ambiente de Homologação atualizado com sucesso!${NC}"
         ;;
     2)
@@ -66,8 +66,8 @@ case $opcao in
         echo -e "${AZUL}Atualizando contêineres do Docker...${NC}"
         sudo docker-compose -p prod -f docker-compose.prod.yml up -d --build
         sleep 5
-        echo -e "${AZUL}Rodando Versionamento do Banco de Dados (Migrations no Docker)...${NC}"
-        sudo docker run --rm -v "$(pwd)":/app -w /app -e DATABASE_URL="postgres://postgres:123@172.17.0.1:5432/financas_db" node:18-alpine npm run migrate
+        echo -e "${AZUL}Rodando Versionamento do Banco de Dados (Migrations)...${NC}"
+        sudo docker run --rm --network prod_default -v "$(pwd)":/app -w /app -e DATABASE_URL="postgres://postgres:123@db:5432/financas_db" node:18-alpine npm run migrate
         echo -e "${VERDE}Ambiente de Produção atualizado com sucesso!${NC}"
         ;;
     3)
