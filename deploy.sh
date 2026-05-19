@@ -17,16 +17,16 @@ if [ $? -ne 0 ]; then
 fi
 
 # 2. Instalar Dependências
-echo -e "\n${AZUL}2. Instalando dependências (npm install)...${NC}"
-npm install
+echo -e "\n${AZUL}2. Instalando dependências (npm install no Docker)...${NC}"
+sudo docker run --rm -v "$(pwd)":/app -w /app node:18-alpine npm install
 if [ $? -ne 0 ]; then
     echo -e "${VERMELHO}Erro ao instalar dependências.${NC}"
     exit 1
 fi
 
 # 3. Análise de Qualidade (Lint)
-echo -e "\n${AZUL}3. Executando Revisão de Qualidade de Código (ESLint)...${NC}"
-npm run lint
+echo -e "\n${AZUL}3. Executando Revisão de Qualidade de Código (ESLint no Docker)...${NC}"
+sudo docker run --rm -v "$(pwd)":/app -w /app node:18-alpine npm run lint
 if [ $? -ne 0 ]; then
     echo -e "${VERMELHO}Falha na análise de qualidade de código. Corrija os erros antes do deploy.${NC}"
     exit 1
@@ -34,8 +34,8 @@ fi
 echo -e "${VERDE}Qualidade de código validada com sucesso!${NC}"
 
 # 4. Testes Automatizados (Exibir Estatísticas)
-echo -e "\n${AZUL}4. Executando Testes Automatizados e Cobertura...${NC}"
-npm test
+echo -e "\n${AZUL}4. Executando Testes Automatizados e Cobertura (Jest no Docker)...${NC}"
+sudo docker run --rm -v "$(pwd)":/app -w /app node:18-alpine npm test
 if [ $? -ne 0 ]; then
     echo -e "${VERMELHO}Alguns testes falharam. Deploy cancelado para proteger o ambiente.${NC}"
     exit 1
