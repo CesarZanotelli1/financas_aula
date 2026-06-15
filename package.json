@@ -9,10 +9,7 @@
     "dev": "nodemon app.js",
     "test": "cross-env NODE_ENV=test jest --runInBand",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "migrate": "node-pg-migrate up",
-    "migrate:down": "node-pg-migrate down",
-    "migrate:redo": "node-pg-migrate down && node-pg-migrate up"
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [
     "finança",
@@ -34,7 +31,6 @@
     "cross-env": "^10.1.0",
     "eslint": "^8.57.1",
     "jest": "^30.0.5",
-    "node-pg-migrate": "^7.9.1",
     "nodemon": "^3.0.2",
     "supertest": "^7.1.1"
   },
