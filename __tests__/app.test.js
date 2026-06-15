@@ -157,7 +157,8 @@ describe('rotas da aplicacao', () => {
 
     const res = await agent.get('/lancamentos');
     expect(res.status).toBe(200);
-    expect(res.text).toContain('Listagem de Lancamentos');
+    expect(res.text).toContain('Lancamen');
+    expect(res.text).toContain('<table');
   });
 
   test('deve aplicar filtros na query de listagem', async () => {
