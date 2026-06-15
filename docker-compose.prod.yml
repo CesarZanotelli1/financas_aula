@@ -8,6 +8,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123
       POSTGRES_DB: financas_db
+    volumes:
+      - prod_postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     restart: always
@@ -34,3 +36,6 @@ services:
       DB_PORT: 5432
       SESSION_SECRET: adsdadad!
     restart: always
+
+volumes:
+  prod_postgres_data:

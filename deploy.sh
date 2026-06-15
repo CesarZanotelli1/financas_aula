@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Cores para o terminal
+# Cores para o terminal.
 VERDE='\033[0;32m'
 VERMELHO='\033[0;31m'
 AZUL='\033[0;34m'
-NC='\033[0m' # Sem cor
+NC='\033[0m'
 
-echo -e "${AZUL}=== [Pipeline Semi-Automatizado de CI/CD] ===${NC}"
+echo -e "${AZUL}=== [Deploy Manual da VM] ===${NC}"
 
-# 1. Git Pull
+# Etapa 1: atualiza o código com a branch principal.
 echo -e "\n${AZUL}1. Atualizando o código fonte (Git Pull)...${NC}"
 git pull origin main
 if [ $? -ne 0 ]; then
@@ -16,35 +16,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# 2. Instalar Dependências
-echo -e "\n${AZUL}2. Instalando dependências (npm install no Docker)...${NC}"
-sudo docker run --rm -v "$(pwd)":/app -w /app node:18-alpine npm install
-if [ $? -ne 0 ]; then
-    echo -e "${VERMELHO}Erro ao instalar dependências.${NC}"
-    exit 1
-fi
+# O CI pesado já foi executado no GitHub Actions.
+echo -e "${VERDE}CI concluída com sucesso no GitHub Actions. Pronto para selecionar o ambiente.${NC}"
 
-# 3. Análise de Qualidade (Lint)
-echo -e "\n${AZUL}3. Executando Revisão de Qualidade de Código (ESLint no Docker)...${NC}"
-sudo docker run --rm -v "$(pwd)":/app -w /app node:18-alpine npm run lint
-if [ $? -ne 0 ]; then
-    echo -e "${VERMELHO}Falha na análise de qualidade de código. Corrija os erros antes do deploy.${NC}"
-    exit 1
-fi
-echo -e "${VERDE}Qualidade de código validada com sucesso!${NC}"
-
-# 4. Testes Automatizados (Exibir Estatísticas)
-echo -e "\n${AZUL}4. Executando Testes Automatizados e Cobertura (Jest no Docker)...${NC}"
-sudo docker run --rm -v "$(pwd)":/app -w /app node:18-alpine npm test
-if [ $? -ne 0 ]; then
-    echo -e "${VERMELHO}Alguns testes falharam. Deploy cancelado para proteger o ambiente.${NC}"
-    exit 1
-fi
-echo -e "${VERDE}Todos os testes passaram com sucesso!${NC}"
-
-# 5. Seleção do Ambiente
 echo -e "\n${AZUL}=============================================${NC}"
-echo -e "Deseja atualizar qual ambiente na VM?"
+echo -e "Selecione o ambiente para atualização na VM:"
 echo -e "1) ${VERDE}Homologação (Porta 3001)${NC}"
 echo -e "2) ${AZUL}Produção (Porta 3000)${NC}"
 echo -e "3) Sair"
