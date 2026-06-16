@@ -5,7 +5,7 @@ jest.mock('../config/db', () => ({
 }));
 
 const lancamentoService = require('../services/lancamentoService');
-
+const teste = "aa";
 describe('lancamentoService', () => {
   test('deve validar campos obrigatorios no create', () => {
     const result = lancamentoService.validarLancamento({});
