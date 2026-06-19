@@ -9,7 +9,6 @@ const SMTP_CONFIG = {
   },
 };
 
-const erro ="opa";
 const EMAIL_FROM = process.env.EMAIL_FROM;
 const transporter = nodemailer.createTransport(SMTP_CONFIG);
 
